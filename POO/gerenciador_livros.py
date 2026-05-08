@@ -18,7 +18,11 @@ while True:
     if opcao == "1":
         titulo = input("Digite o título do livro: ")
         autor = input("Digite o autor do livro: ")
-        quantidade = int(input("Digite a quantidade disponível: "))
+        try:
+            quantidade = int(input("Digite a quantidade disponível: "))
+        except ValueError:
+            print("Por favor, insira um número válido para a quantidade.")
+            continue
         if quantidade < 0:
             print("Quantidade não pode ser negativa. Livro não adicionado.")
             continue
@@ -37,7 +41,11 @@ while True:
                 print(f"{idx + 1} - {livro['titulo']} por {livro['autor']} (Quantidade: {livro['quantidade']})")
 
     elif opcao == "3":
-        indice = int(input("Digite o número do livro a ser removido: ")) - 1
+        try:
+            indice = int(input("Digite o número do livro a ser removido: ")) - 1
+        except ValueError:
+            print("Por favor, insira um número válido.")
+            continue
         if 0 <= indice < len(livros):
             removed_book = livros.pop(indice)
             print(f"Livro '{removed_book['titulo']}' removido com sucesso!")
@@ -45,9 +53,17 @@ while True:
             print("Número inválido.")
 
     elif opcao == "4":
-        indice = int(input("Digite o número do livro para atualizar a quantidade: ")) - 1
+        try:
+            indice = int(input("Digite o número do livro para atualizar a quantidade: ")) - 1
+        except ValueError:
+            print("Por favor, insira um número válido.")
+            continue
         if 0 <= indice < len(livros):
-            nova_quantidade = int(input("Digite a nova quantidade disponível: "))
+            try:
+                nova_quantidade = int(input("Digite a nova quantidade disponível: "))
+            except ValueError:
+                print("Por favor, insira um número válido para a quantidade.")
+                continue
             if nova_quantidade < 0:
                 print("Quantidade não pode ser negativa. Atualização cancelada.")
                 continue
@@ -57,20 +73,33 @@ while True:
             print("Número inválido.")
 
     elif opcao == "5":
-        indice = int(input("Digite o número do livro para registrar o empréstimo: ")) - 1
+        try:
+            indice = int(input("Digite o número do livro para registrar o empréstimo: ")) - 1
+        except ValueError:
+            print("Por favor, insira um número válido.")
+            continue
         if 0 <= indice < len(livros):
             if livros[indice]['quantidade'] > 0:
                 nome_usuario = input("Digite o nome do usuário que está emprestando o livro: ")
-                quantidade_livros = int(input("Digite a quantidade de livros a emprestar: "))
+                try:
+                    quantidade_livros = int(input("Digite a quantidade de livros a emprestar: "))
+                except ValueError:
+                    print("Por favor, insira um número válido para a quantidade.")
+                    continue
                 if quantidade_livros <= 0:
                     print("Quantidade deve ser maior que zero. Empréstimo cancelado.")
                     continue
                 if quantidade_livros > livros[indice]['quantidade']:
                     print(f"Desculpe, apenas {livros[indice]['quantidade']} cópias disponíveis. Empréstimo cancelado.")
                     continue
-                
+
                 livros[indice]['quantidade'] -= quantidade_livros
-                historico_emprestimos.append({"titulo": livros[indice]['titulo'], "usuario": nome_usuario, "quantidade": quantidade_livros})
+                historico_emprestimos.append({
+                    "titulo": livros[indice]['titulo'],
+                    "autor": livros[indice]['autor'],
+                    "usuario": nome_usuario,
+                    "quantidade": quantidade_livros
+                })
                 print(f"Empréstimo registrado para '{livros[indice]['titulo']}' por {nome_usuario}.")
             else:
                 print("Desculpe, este livro não está disponível no momento.")
@@ -81,7 +110,12 @@ while True:
             print("Nenhum empréstimo registrado.")
         else:
             for idx, emprestimo in enumerate(historico_emprestimos):
-                print(f"{idx + 1} - '{emprestimo['titulo']}' emprestado para {emprestimo['usuario']} (Quantidade: {emprestimo['quantidade']})")
+                print(
+                    f"{idx + 1} - Título: '{emprestimo['titulo']}' | "
+                    f"Autor: {emprestimo['autor']} | "
+                    f"Usuário: {emprestimo['usuario']} | "
+                    f"Quantidade: {emprestimo['quantidade']}"
+                )
     elif opcao == "0":
         print("Saindo do Gerenciador de Livros. Até mais!")
         break
