@@ -36,6 +36,9 @@ def autenticar_usuario(credentials: HTTPBasicCredentials = Depends(security)):
 def listar_tarefas(page: int = 1, size: int = 10, order_by: str = "nome", credenciais: HTTPBasicCredentials = Depends(autenticar_usuario)):
     if page < 1 or size < 1:
         raise HTTPException(status_code=400, detail="Parâmetros de paginação inválidos")
+    campos_validos = {"nome", "descricao", "concluida"}
+    if order_by not in campos_validos:
+        raise HTTPException(status_code=400, detail=f"Campo de ordenação inválido. Use um dos seguintes: {', '.join(sorted(campos_validos))}")
     if not tarefas:
         raise HTTPException(status_code=404, detail="Nenhuma tarefa encontrada")
     
